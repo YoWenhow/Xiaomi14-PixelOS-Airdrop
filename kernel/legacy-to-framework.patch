@@ -1,0 +1,188 @@
+--- a/inc/wlan_hdd_passthru_experiment.h
++++ b/inc/wlan_hdd_passthru_experiment.h
+@@ -3,8 +3,14 @@
+ #define _WLAN_HDD_PASSTHRU_EXPERIMENT_H_
+ #include <linux/types.h>
+ #ifdef DRIVER_PASSTHRU_RUNTIME
++struct hdd_context;
+ bool hdd_pt_exclusive_mode(void);
++bool hdd_pt_framework_netdev_mode(void);
++bool hdd_pt_framework_netdev_ready(struct hdd_context *hdd);
+ #else
++struct hdd_context;
+ static inline bool hdd_pt_exclusive_mode(void) { return false; }
++static inline bool hdd_pt_framework_netdev_mode(void) { return false; }
++static inline bool hdd_pt_framework_netdev_ready(struct hdd_context *hdd) { return false; }
+ #endif
+ #endif
+--- a/src/wlan_hdd_passthru_runtime.c
++++ b/src/wlan_hdd_passthru_runtime.c
+@@ -1023,6 +1023,38 @@
+ 	return pt_exclusive;
+ }
+ 
++/* Opt-in administrative STA interface only: no ordinary vdev or RF use.
++ * The immutable default keeps all previous experiments unchanged.
++ */
++static bool pt_framework_netdev;
++module_param(pt_framework_netdev, bool, 0400);
++MODULE_PARM_DESC(pt_framework_netdev, "Allow zero-resource STA administrative UP in exclusive PT mode");
++
++bool hdd_pt_framework_netdev_mode(void)
++{
++	return READ_ONCE(pt_framework_netdev) && hdd_pt_exclusive_mode();
++}
++
++bool hdd_pt_framework_netdev_ready(struct hdd_context *hdd)
++{
++	struct hdd_pt_runtime *rt;
++	bool ready;
++
++	if (!hdd_pt_framework_netdev_mode())
++		return false;
++	/* Do not wait on lifecycle/control while ndo_open holds RTNL/DSC.
++	 * This lock prevents rt retirement while its admission state is read.
++	 */
++	spin_lock_bh(&hdd_pt_public_lock);
++	rt = hdd_pt_current;
++	ready = rt && READ_ONCE(rt->provider) && rt->hdd == hdd &&
++		READ_ONCE(hdd_pt_module_pinned) &&
++		!READ_ONCE(hdd_pt_registration_sealed) && !READ_ONCE(rt->error) &&
++		!atomic_read(&rt->recovering) && !atomic_read(&rt->closing);
++	spin_unlock_bh(&hdd_pt_public_lock);
++	return ready;
++}
++
+ static int hdd_pt_experiment_activate(const char *value,
+ 				    const struct kernel_param *kp)
+ {
+--- a/src/wlan_hdd_main.c
++++ b/src/wlan_hdd_main.c
+@@ -5504,12 +5504,33 @@
+  *
+  * Return: 0 for success; non-zero for failure
+  */
++/* Administrative UP never creates a firmware STA vdev. The matching
++ * close must also work after provider sealing/withdrawal, so its resource
++ * predicate intentionally does not depend on runtime publication.
++ */
++static bool hdd_pt_framework_sta_empty(struct hdd_adapter *adapter)
++{
++	unsigned int i;
++
++	if (!hdd_pt_framework_netdev_mode() ||
++	    adapter->device_mode != QDF_STA_MODE || !adapter->deflink ||
++	    test_bit(DEVICE_IFACE_OPENED, &adapter->event_flags) ||
++	    adapter->deflink->vdev ||
++	    test_bit(SME_SESSION_OPENED, &adapter->deflink->link_flags))
++		return false;
++	for (i = 0; i < WLAN_MAX_ML_BSS_LINKS; i++)
++		if (adapter->link_info[i].vdev ||
++		    test_bit(SME_SESSION_OPENED, &adapter->link_info[i].link_flags))
++			return false;
++	return true;
++}
++
+ static int hdd_open(struct net_device *net_dev)
+ {
+ 	int errno;
+ 	struct osif_vdev_sync *vdev_sync;
+ 
+-	if (hdd_pt_exclusive_mode())
++	if (hdd_pt_exclusive_mode() && !hdd_pt_framework_netdev_mode())
+ 		return -EBUSY;
+ 
+ 	errno = osif_vdev_sync_trans_start(net_dev, &vdev_sync);
+@@ -5518,7 +5539,22 @@
+ 		return errno;
+ 	}
+ 
+-	errno = __hdd_open(net_dev);
++	if (hdd_pt_framework_netdev_mode()) {
++		struct hdd_adapter *adapter = WLAN_HDD_GET_PRIV_PTR(net_dev);
++		struct hdd_context *hdd = WLAN_HDD_GET_CTX(adapter);
++
++		errno = wlan_hdd_validate_context(hdd);
++		if (!errno && (!hdd_pt_framework_sta_empty(adapter) ||
++			      !hdd_pt_framework_netdev_ready(hdd)))
++			errno = -EBUSY;
++		if (!errno) {
++			netif_carrier_off(net_dev);
++			netif_tx_stop_all_queues(net_dev);
++			hdd_info("PT administrative STA up, no firmware vdev");
++		}
++	} else {
++		errno = __hdd_open(net_dev);
++	}
+ 	if (!errno)
+ 		osif_vdev_cache_command(vdev_sync, NO_COMMAND);
+ 
+@@ -5631,7 +5667,13 @@
+ 		return errno;
+ 	}
+ 
+-	errno = hdd_stop_no_trans(net_dev);
++	if (hdd_pt_framework_sta_empty(WLAN_HDD_GET_PRIV_PTR(net_dev))) {
++		netif_carrier_off(net_dev);
++		netif_tx_stop_all_queues(net_dev);
++		errno = 0;
++	} else {
++		errno = hdd_stop_no_trans(net_dev);
++	}
+ 
+ 	osif_vdev_sync_trans_stop(vdev_sync);
+ 
+--- a/src/wlan_hdd_cfg80211.c
++++ b/src/wlan_hdd_cfg80211.c
+@@ -23113,6 +23113,29 @@
+ 	if (errno)
+ 		return errno;
+ 
++	/* An IFF_UP mode change otherwise calls hdd_start_adapter below.
++	 * Only an idempotent request for the existing empty STA is admissible.
++	 */
++	if (hdd_pt_framework_netdev_mode()) {
++		unsigned int i;
++
++		if (type != NL80211_IFTYPE_STATION ||
++		    !ndev->ieee80211_ptr ||
++		    ndev->ieee80211_ptr->iftype != NL80211_IFTYPE_STATION ||
++		    adapter->device_mode != QDF_STA_MODE ||
++		    test_bit(DEVICE_IFACE_OPENED, &adapter->event_flags) ||
++		    !link_info || link_info->vdev ||
++		    test_bit(SME_SESSION_OPENED, &link_info->link_flags) ||
++		    !hdd_pt_framework_netdev_ready(hdd_ctx))
++			return -EBUSY;
++		for (i = 0; i < WLAN_MAX_ML_BSS_LINKS; i++)
++			if (adapter->link_info[i].vdev ||
++			    test_bit(SME_SESSION_OPENED,
++				     &adapter->link_info[i].link_flags))
++				return -EBUSY;
++		return 0;
++	}
++
+ 	if (wlan_hdd_is_mon_concurrency())
+ 		return -EINVAL;
+ 
+--- a/src/wlan_hdd_tx_rx.c
++++ b/src/wlan_hdd_tx_rx.c
+@@ -26,6 +26,7 @@
+ /* denote that this file does not allow legacy hddLog */
+ #define HDD_DISALLOW_LEGACY_HDDLOG 1
+ #include "osif_sync.h"
++#include "wlan_hdd_passthru_experiment.h"
+ #include <wlan_hdd_tx_rx.h>
+ #include <wlan_hdd_softap_tx_rx.h>
+ #include <wlan_hdd_napi.h>
+@@ -628,6 +629,11 @@
+  */
+ netdev_tx_t hdd_hard_start_xmit(struct sk_buff *skb, struct net_device *net_dev)
+ {
++	/* Defensive drop even if a caller bypasses carrier/queue admission. */
++	if (hdd_pt_framework_netdev_mode()) {
++		dev_kfree_skb_any(skb);
++		return NETDEV_TX_OK;
++	}
+ 	__hdd_hard_start_xmit(skb, net_dev);
+ 
+ 	return NETDEV_TX_OK;

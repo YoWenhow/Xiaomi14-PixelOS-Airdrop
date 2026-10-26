@@ -1,0 +1,122 @@
+{
+  "quickshare-runtime/firmware/amss20.bin": {
+    "sha256": "13f01cb46efbe498c854352bfc253fa3665c14a14c37a0a6ed6a609a48a8709c",
+    "bytes": 6426688,
+    "redistributable": false
+  },
+  "quickshare-runtime/lib64/libmosey_daemon_ffi.so": {
+    "sha256": "701ba469bcb4928889626811a7ce48456f28901a848666b88a5022c80659fa77",
+    "bytes": 2668080,
+    "redistributable": false
+  },
+  "quickshare-runtime/local-stability.so": {
+    "sha256": "7064387f54ba2f9ccf549a932e2a39d2e908349b056c687b8601300780346b31",
+    "bytes": 10728,
+    "redistributable": true
+  },
+  "quickshare-runtime/modules/houji_wonder_bridge.ko": {
+    "sha256": "4acbd94943fc4c7fc400f5f1d8d51ad1820bf1243ff4532ab077227bb08b7629",
+    "bytes": 73664,
+    "redistributable": true
+  },
+  "quickshare-runtime/modules/qca_cld3_kiwi_v2.ko": {
+    "sha256": "5359ad849814ba64867f0ee6c974f80c07085a9c9019d70baafe8a26af7a9fc0",
+    "bytes": 20308608,
+    "redistributable": true
+  },
+  "quickshare-runtime/modules/wonder-probe": {
+    "sha256": "a8f35fbf97298b1ee4b240bb9601b43f5351c64904a12fd3540b7c58b7c41db4",
+    "bytes": 18848,
+    "redistributable": true
+  },
+  "quickshare-runtime/modules/wonder.ko": {
+    "sha256": "380790907bc89e6ac47eaa1ca32e269a911884cbe22a19deb6e65b6d23b7e67a",
+    "bytes": 2927768,
+    "redistributable": true
+  },
+  "quickshare-runtime/mosey_server": {
+    "sha256": "14b94f77ded8d68168b721c93443460ea9717e1a2fb62177d0ac0d9b5d0c5a90",
+    "bytes": 191368,
+    "redistributable": false
+  },
+  "quickshare-runtime/qs-classes.dex": {
+    "sha256": "8a2e83a467dfc570db9f5dde8316e000995bacca523f367d9674028c68cf88cf",
+    "bytes": 4516,
+    "redistributable": true
+  },
+  "runtime/ble-classes.dex": {
+    "sha256": "1949f6ba201c918647d054d25dd25b26e31437f6bc1cc35062c56d4c6d715cbd",
+    "bytes": 8336,
+    "redistributable": true
+  },
+  "runtime/firmware/amss20.bin": {
+    "sha256": "13f01cb46efbe498c854352bfc253fa3665c14a14c37a0a6ed6a609a48a8709c",
+    "bytes": 6426688,
+    "redistributable": false
+  },
+  "runtime/lib64/libmosey_daemon_ffi.so": {
+    "sha256": "701ba469bcb4928889626811a7ce48456f28901a848666b88a5022c80659fa77",
+    "bytes": 2668080,
+    "redistributable": false
+  },
+  "runtime/local-stability.so": {
+    "sha256": "653d3baa7cbb78d7b5ed78a381e6c1cf1e544b5011ba723f5eb8df3af29bd988",
+    "bytes": 9600,
+    "redistributable": true
+  },
+  "runtime/modules/houji_wonder_bridge.ko": {
+    "sha256": "4acbd94943fc4c7fc400f5f1d8d51ad1820bf1243ff4532ab077227bb08b7629",
+    "bytes": 73664,
+    "redistributable": true
+  },
+  "runtime/modules/qca_cld3_kiwi_v2.ko": {
+    "sha256": "5640700fb8d48b86813415149eccb0a96d66bd7e2f8c8198d22d6a32e5965a31",
+    "bytes": 20305816,
+    "redistributable": true
+  },
+  "runtime/modules/wonder-probe": {
+    "sha256": "a8f35fbf97298b1ee4b240bb9601b43f5351c64904a12fd3540b7c58b7c41db4",
+    "bytes": 18848,
+    "redistributable": true
+  },
+  "runtime/modules/wonder.ko": {
+    "sha256": "380790907bc89e6ac47eaa1ca32e269a911884cbe22a19deb6e65b6d23b7e67a",
+    "bytes": 2927768,
+    "redistributable": true
+  },
+  "runtime/mosey_server": {
+    "sha256": "14b94f77ded8d68168b721c93443460ea9717e1a2fb62177d0ac0d9b5d0c5a90",
+    "bytes": 191368,
+    "redistributable": false
+  },
+  "runtime/scope-probe": {
+    "sha256": "746d1d2e1750f514b4761df6c96445d4dc3071956af8913f7636e7abb9e3c40e",
+    "bytes": 5152,
+    "redistributable": true
+  },
+  "runtime/service-probe": {
+    "sha256": "d0e130586f86011b8c5446e482544814f86898fac4480709db3703b41fea29fd",
+    "bytes": 6784,
+    "redistributable": true
+  },
+  "MoseyApp.apk": {
+    "sha256": "8e087557289d70a6fb29b34fd64c11ff15353e0f07ad89dfebe1dc15e723888a",
+    "bytes": 26903018,
+    "redistributable": false
+  },
+  "module/state-classes.dex": {
+    "sha256": "7b73b984b85369df13eabeab5c18e2d3adaeb38bc83b6fbcca9775483bb6255b",
+    "bytes": 3460,
+    "redistributable": true
+  },
+  "module/auto/observer.dex": {
+    "sha256": "1555aff3338ea8a710ff28312e686ea87e1acd36c826764a37733da32acbb895",
+    "bytes": 15956,
+    "redistributable": true
+  },
+  "module/metadata-template/bind-ro": {
+    "sha256": "5fc84dd18e41986ee24592ea8eabc3503854d0e09558f52d0691fb53f56c2c7a",
+    "bytes": 6640,
+    "redistributable": true
+  }
+}

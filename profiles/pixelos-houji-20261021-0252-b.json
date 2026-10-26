@@ -1,0 +1,24 @@
+{
+  "amss_sha256": "4db7b0e1aa7e4ec071708359c9d0db8d3d7872390cd8e88ffa0bbb30d560bcc8",
+  "phy_sha256": "97c6accd597026a116a36ed2a167a1d229bd00d62653bbe381c2ec814cbbe3a7",
+  "bdf_sha256": "866c520d8f3546af587801e2f98e9280c9eeea55fd0d8be9aca76b4790d6f0c7",
+  "regdb_sha256": "237fc60976e5eb383ef0832e67d530d8b032e08e974fbe88a35f25c8c5784210",
+  "profile_id": "pixelos-houji-20261021-0252-b",
+  "device": "houji",
+  "slot_suffix": "_b",
+  "kernel_release": "6.1.138-android14-11-g0c3d559bcd85-ab14529422",
+  "fingerprint": "Xiaomi/houji/houji:16/BP2A.250605.031.A3/OS3.0.307.0.WNCCNXM:user/release-keys",
+  "vendor_dlkm_incremental": "1792522354",
+  "rom_zip_sha256": "d0fd69144afd03bff062b5605cd5717a2903ab16aaa4a45bd0d11cb9fc7d8da6",
+  "ksud_sha256": "4f7d5fd65631915ea579ff406bd9cbe58217f2c91dac6527f5b2f28ad4508171",
+  "wlan_disk_sha256": "d3fbe4f1b62f8c3533609945b617508e8a585660f5640aeeda08f8508416137b",
+  "wlan_note_sha256": "a3e9bd62646444e1ecbe0f421c95ec46e6caf69a78323efb2f6ebe00e6b2bd8b",
+  "system_ext_checks": {
+    "vintf": "e3e5a9c4a549b06053f5d4d84b53b115f37fe6f26c82d4059520b8f24383a1ad",
+    "permissions": "d1bf62cd4a89645bb6a13c196ebaff37e3fdf4d53a11715060005b92933dada3",
+    "default_permissions": "65d92cd46649d7cd0b7a6a2d331e5a08f04ae7c36f6952fd182d1a1aa247e5b1",
+    "service_contexts": "05b579fae33eb3594c94e139c75112fdb6357c69d8493e871932db72e5c61077"
+  },
+  "radio_baseline_validation": "verified",
+  "ksud_new_rom_live_verified": true
+}

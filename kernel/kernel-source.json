@@ -1,0 +1,12 @@
+{
+  "url": "https://codeload.github.com/MiCode/Xiaomi_Kernel_OpenSource/tar.gz/8c66ad18fc6132fcdcbdf0cf67832f47b33010a4",
+  "sha256": "ca44be412747a4da786276957c5791ba8db094a536b4d2a0ee7dfeedb841bfc3",
+  "changed": {
+    "drivers/iio/stm/imu/st_asm330lhhx/Kconfig": "3e68c1a6e7a65fda5d47951c4c6ae4a72885925a2bbfc53bc49b38d44a038124",
+    "drivers/misc/hwid/Kconfig": "da69e3896d3dd9c1973bd761de1cfbb3afcb49a83540f31abddc7f23ae83d652"
+  },
+  "baseline_changed": {
+    "drivers/iio/stm/imu/st_asm330lhhx/Kconfig": null,
+    "drivers/misc/hwid/Kconfig": null
+  }
+}

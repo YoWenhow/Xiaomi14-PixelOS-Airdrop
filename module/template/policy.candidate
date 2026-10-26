@@ -1,0 +1,5 @@
+type houji_mosey_service service_manager_type
+allow ksu houji_mosey_service service_manager { add find }
+allow priv_app_36 houji_mosey_service service_manager find
+allow priv_app_36 ksu binder { call transfer }
+allow ksu priv_app_36 binder { call transfer }

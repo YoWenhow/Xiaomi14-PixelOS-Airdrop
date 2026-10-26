@@ -1,0 +1,6 @@
+# Offline stage 1 default: no Wonder registration and no PASSTHRU mode.
+# CONFIG_WONDER_SUPPORT is not set
+# CONFIG_WONDER_RX_FILTER_SUPPORT is not set
+# CONFIG_WONDER_SYNA_SUPPORT is not set
+# CONFIG_WONDER_TX_DEBUG is not set
+# CONFIG_WONDER_RX_DEBUG is not set

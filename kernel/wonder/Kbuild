@@ -1,0 +1,6 @@
+# SPDX-License-Identifier: GPL-2.0-only
+# Independent offline Kbuild adaptation; all eight C files remain unchanged.
+obj-$(CONFIG_WONDER_SUPPORT) += wonder.o
+wonder-y := main.o mac80211.o wondertap.o nl80211_ven_cmd.o mac80211_txs.o ssr.o band_config.o
+wonder-$(CONFIG_DEBUG_FS) += debugfs.o
+ccflags-y += -I$(src)/include

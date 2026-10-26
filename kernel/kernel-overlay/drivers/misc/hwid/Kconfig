@@ -1,0 +1,9 @@
+config MI_HARDWARE_ID
+	tristate "Xiaomi hardware identification module"
+	depends on QCOM_SOCINFO
+	help
+	  Expose the Xiaomi hardware project and revision values supplied by
+	  the bootloader, and provide them to other Xiaomi device drivers.
+
+	  To compile this driver as a module, choose M here. The module will
+	  be called hwid.

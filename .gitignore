@@ -1,0 +1,16 @@
+/local/
+/build/
+/dist/
+/private/
+**/__pycache__/
+*.pyc
+*.p12
+*.jks
+*.keystore
+*.pem
+*.key
+.env
+*.log
+native/**/*-host.so
+native/**/*-test-result.json
+tests/*-TESTS.json
